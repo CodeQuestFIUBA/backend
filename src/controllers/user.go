@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"codequest/configs"
-	"codequest/models"
+	"codequest/src/configs"
+	"codequest/src/models"
 	"context"
 	"net/http"
 

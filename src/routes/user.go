@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"codequest/controllers"
+	"codequest/src/controllers"
 
 	"github.com/gin-gonic/gin"
 )

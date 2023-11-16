@@ -1,8 +1,8 @@
 package main
 
 import (
-	"codequest/configs"
-	"codequest/routes"
+	"codequest/src/configs"
+	"codequest/src/routes"
 
 	"github.com/gin-gonic/gin"
 )
