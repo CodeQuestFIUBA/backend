@@ -1,5 +1,7 @@
 # Backend
 
+## Local
+
 Step 1: Make sure to check whether the Golang is installed on your system by checking the version of Go.
 
 ```go version```
@@ -20,6 +22,13 @@ Step 5: Start the Mongo database service.
 
 ```docker-compose up mongodb```
 
-Step 6: Run the app. (Standing in the "src" folder)
+Step 6: Run the app.
 
 ```go run main.go```
+
+
+## Docker
+
+Step 1: Start the MongoDB service and run the App.
+
+```docker-compose up```
