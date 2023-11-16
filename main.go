@@ -10,9 +10,10 @@ import (
 func main() {
 	r := gin.Default()
 
-	configs.ConnectToMongoDB()
+	_ = configs.ConnectToMongoDB()
 
 	routes.UserRoute(r)
+	routes.JsExecutorRoute(r)
 
-	r.Run(":8080")
+	_ = r.Run(":8080")
 }

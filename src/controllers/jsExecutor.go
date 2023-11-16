@@ -32,6 +32,6 @@ func JsExecute() gin.HandlerFunc {
 
 		fmt.Printf("Value: %s\n\n", val)
 
-		c.JSON(http.StatusOK, gin.H{"message": "Request body received"})
+		c.JSON(http.StatusOK, gin.H{"message": "Request body received", "value": val})
 	}
 }
