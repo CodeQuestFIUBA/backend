@@ -20,7 +20,22 @@ func JsExecute() gin.HandlerFunc {
 
 		fmt.Printf("Request Body:\n\n%s\n\n", body)
 
-		ctx := v8go.NewContext()
+		iso := v8go.NewIsolate()
+		defer iso.Dispose()
+		ctx := v8go.NewContext(iso)
+		defer ctx.Close()
+		global := ctx.Global()
+
+		console := v8go.NewObjectTemplate(iso)
+		logfn := v8go.NewFunctionTemplate(iso, func(info *v8go.FunctionCallbackInfo) *v8go.Value {
+			fmt.Println(info.Args()[0])
+			return nil
+		})
+		console.Set("log", logfn)
+		consoleObj, _ := console.NewInstance(ctx)
+
+		global.Set("console", consoleObj)
+
 		_, err = ctx.RunScript(string(body), "main.js")
 
 		if err != nil {
@@ -28,10 +43,10 @@ func JsExecute() gin.HandlerFunc {
 			return
 		}
 
-		val, _ := ctx.RunScript("result", "value.js")
+		val, _ := ctx.RunScript("result", "main.js")
 
 		fmt.Printf("Value: %s\n\n", val)
 
-		c.JSON(http.StatusOK, gin.H{"message": "Request body received", "value": val})
+		c.JSON(http.StatusOK, gin.H{"message": "Request body executed"})
 	}
 }
