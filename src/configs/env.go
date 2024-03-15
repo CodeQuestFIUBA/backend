@@ -26,3 +26,12 @@ func EnvDBName() string {
 
 	return os.Getenv("MONGO_DB_NAME")
 }
+
+func JWTSecretKey() string {
+	err := godotenv.Load(EnvFilePath)
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	return os.Getenv("SECRET_KEY")
+}

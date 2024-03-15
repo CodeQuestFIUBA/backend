@@ -1,7 +1,8 @@
 package main
 
 import (
-	"codequest/src/configs"
+	"codequest/src/database"
+	"codequest/src/middleware"
 	"codequest/src/routes"
 
 	_ "codequest/docs"
@@ -19,10 +20,13 @@ import (
 func main() {
 	r := gin.Default()
 
-	_ = configs.ConnectToMongoDB()
-
+	_ = database.CreateMongoDBInstance()
 	routes.UserRoute(r)
+
+	r.Use(middleware.Authentication())
+
 	routes.JsExecutorRoute(r)
+	routes.VectorLevelsRoutes(r)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 

@@ -7,7 +7,7 @@ import (
 )
 
 func UserRoute(router *gin.Engine) {
-	router.GET("/users", controllers.GetAllUsers())
-	router.GET("/users/:id", controllers.GetUserByID())
-	router.POST("/users", controllers.PostUser())
+	router.POST("/users/signup", controllers.SignUp())
+	router.POST("/users/login", controllers.Login())
+	// Refresh token TODO
 }

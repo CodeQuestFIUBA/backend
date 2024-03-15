@@ -8,4 +8,5 @@ import (
 
 func JsExecutorRoute(router *gin.Engine) {
 	router.POST("/execute", controllers.JsExecute())
+	router.GET("/ping", controllers.Ping())
 }

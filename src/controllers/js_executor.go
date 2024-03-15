@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"codequest/src/models"
 	"fmt"
 	"net/http"
 
@@ -14,7 +15,11 @@ func JsExecute() gin.HandlerFunc {
 		body, err := c.GetRawData()
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read request body"})
+			c.JSON(http.StatusInternalServerError,
+				models.StandardResponse{
+					Code:    http.StatusInternalServerError,
+					Message: "Failed to read request body",
+					Data:    nil})
 			return
 		}
 
@@ -39,14 +44,18 @@ func JsExecute() gin.HandlerFunc {
 		_, err = ctx.RunScript(string(body), "main.js")
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed executing de JavaScript code -> " + err.Error()})
+			c.JSON(http.StatusInternalServerError,
+				models.StandardResponse{
+					Code:    http.StatusInternalServerError,
+					Message: err.Error(),
+					Data:    nil})
 			return
 		}
 
-		val, _ := ctx.RunScript("result", "main.js")
-
-		fmt.Printf("Value: %s\n\n", val)
-
-		c.JSON(http.StatusOK, gin.H{"message": "Request body executed"})
+		c.JSON(http.StatusOK,
+			models.StandardResponse{
+				Code:    http.StatusOK,
+				Message: "Request body executed",
+				Data:    nil})
 	}
 }
