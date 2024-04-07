@@ -62,17 +62,24 @@ func ExecuteSearchMatrixLevel() gin.HandlerFunc {
 		proxyCode := `
 			const anchoMatriz = 10;
 			const altoMatriz = 6;
-			const matriz = new Array(altoMatriz);
+			const matriz = new Array(anchoMatriz);
+			const params = {
+				anchoMatriz,
+				altoMatriz,
+				matriz
+			}
 			
 			for (var i=0; i<anchoMatriz; i++) {
 				matriz[i] = new Array(altoMatriz);
 				matriz[i].fill(0);
 			}
 			
-			const keyX = Math.floor(Math.random() * anchoMatriz);
-			const keyY = Math.floor(Math.random() * altoMatriz);
+			coordsLlave = {
+				x: Math.floor(Math.random() * (anchoMatriz - altoMatriz) + altoMatriz),
+				y: Math.floor(Math.random() * altoMatriz)
+			}
 
-			matriz[keyY][keyX] = "llave";
+			matriz[coordsLlave.x][coordsLlave.y] = "llave";
 
 			const coordenadasAcceso = [];
 
@@ -81,12 +88,11 @@ func ExecuteSearchMatrixLevel() gin.HandlerFunc {
 					if (!isNaN(prop)) {
 							const coordenadaX = parseInt(prop);
 							const fila = target[prop];
-							console.log("fila: " + prop + ", tipo de fila: " + typeof fila);
 							return new Proxy(fila, {
 									get: function(target, prop) {
 											if (!isNaN(prop)) {
 													const coordenadaY = parseInt(prop);
-													trace.save('Accediendo a la coordenada [' + coordenadaX + ', ' + coordenadaY + ']');
+													trace.save('[' + coordenadaX + ', ' + coordenadaY + ']');
 											}
 											return Reflect.get(...arguments);
 									}
@@ -100,7 +106,7 @@ func ExecuteSearchMatrixLevel() gin.HandlerFunc {
 
 			var userFunction = `
 
-		executeUserFunctionCode := "\nuserFunction(matrixProxy, anchoMatriz, altoMatriz)\n"
+		executeUserFunctionCode := "\nconst coordsUsuario = userFunction(matrixProxy, anchoMatriz, altoMatriz)\n"
 
 		codeToExecute := proxyCode + string(body) + executeUserFunctionCode
 		_, err = ctx.RunScript(codeToExecute, "main.js")
@@ -117,11 +123,18 @@ func ExecuteSearchMatrixLevel() gin.HandlerFunc {
 			return
 		}
 
-		resultMatrix, _ := ctx.RunScript("matriz", "main.js")
+		coordsLlave, _ := ctx.RunScript("coordsLlave", "main.js")
+		coordsUsuario, _ := ctx.RunScript("coordsUsuario", "main.js")
+		params, _ := ctx.RunScript("params", "main.js")
 
-		fmt.Printf("Value: %s\n\n", resultMatrix)
+		fmt.Printf("Value: %s\n\n", coordsLlave)
 
 		c.JSON(http.StatusOK, models.StandardResponse{Code: http.StatusOK, Message: "Request body executed",
-			Data: models.ExecutionResponse{Logs: executionLogs, Result: resultMatrix, VariableTrace: executionTrace}})
+			Data: models.ExecutionResponse{
+				Params:         params,
+				Logs:           executionLogs,
+				Result:         coordsUsuario,
+				ExpectedResult: coordsLlave,
+				VariableTrace:  executionTrace}})
 	}
 }
