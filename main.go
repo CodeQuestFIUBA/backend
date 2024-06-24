@@ -2,15 +2,12 @@ package main
 
 import (
 	"codequest/src/database"
-	"codequest/src/middleware"
+	middleware "codequest/src/middlewares"
 	"codequest/src/routes"
 
-	_ "codequest/docs"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 //	@title			CodeQuest API
@@ -25,10 +22,13 @@ func main() {
 
 	r.Use(middleware.Authentication())
 
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "404 page not found"})
+	})
+
 	routes.JsExecutorRoute(r)
 	routes.VectorLevelsRoutes(r)
-
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	routes.MatrixLevelsRoutes(r)
 
 	_ = r.Run(":8080")
 }
