@@ -29,6 +29,8 @@ func main() {
 	routes.JsExecutorRoute(r)
 	routes.VectorLevelsRoutes(r)
 	routes.MatrixLevelsRoutes(r)
+	routes.ScoreRoute(r)
+	routes.LevelRoute(r)
 
 	_ = r.Run(":8080")
 }
